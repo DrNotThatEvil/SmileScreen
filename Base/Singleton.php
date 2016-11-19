@@ -1,7 +1,7 @@
 <?php
 namespace SmileScreen\Base;
 
-class Singleton
+abstract class Singleton
 {
     /**
      * @var Singleton The reference to *Singleton* instance of this class
@@ -13,13 +13,17 @@ class Singleton
      *
      * @return Singleton The *Singleton* instance.
      */
-    public static function getInstance()
+    final public static function getInstance()
     {
-        if (null === static::$instance) {
-            static::$instance = new static();
+        static $instances = [];
+
+        $calledClass = get_called_class();
+
+        if (!isset($instances[$calledClass])) {
+            $instances[$calledClass] = new $calledClass();
         }
-        
-        return static::$instance;
+
+        return $instances[$calledClass];
     }
 
     /**
