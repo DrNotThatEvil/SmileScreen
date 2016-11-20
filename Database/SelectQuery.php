@@ -69,10 +69,6 @@ class SelectQuery {
         $statement = 'SELECT ';
         $whereValues = array();
 
-        if ($this->select[0] == '*' && count($this->select) == 1) {
-            $statement .= '*';
-        }
-
         if (count($this->select) >= 1) {
             for($i=0; $i<count($this->select); $i++) {
                 $statement .= $this->select[$i].($i < (count($this->select)-1) ? ', ' : ' ');

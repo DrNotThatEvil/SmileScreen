@@ -20,8 +20,6 @@ class ConfigSystem extends Singleton
     protected function __construct() 
     { 
         $this->configFS = ConfigFileSystem::getInstance();
-        $this->setConfigDirectory($this->configDirectory);
-        $this->setConfigFile($this->mainConfigFile);
     }
 
     private function addSlash($file)
@@ -41,6 +39,17 @@ class ConfigSystem extends Singleton
         }, array_change_key_case($arr, $case));
     }
 
+    private function isJson($string) 
+    {
+        return is_string($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE) ? true : false; 
+    }
+
+    public function setDefaultConfigDirectory()
+    {
+        //Syntactic sugar function.
+        $this->setConfigDirectory($this->configDirectory); 
+    }
+    
     public function setConfigDirectory($configDirectory) 
     {
         $siteRoot = $this->configFS::getSiteRoot();
@@ -58,6 +67,12 @@ class ConfigSystem extends Singleton
         $this->fullConfigDirectory = $configDir;
 
         return true;
+    }
+
+    public function setDefaultConfigFile()
+    {
+        //Syntactic sugar function.
+        $this->setConfigFile($this->mainConfigFile); 
     }
 
     public function setConfigFile($mainConfigFile)
@@ -88,8 +103,12 @@ class ConfigSystem extends Singleton
         }
 
         $jsonFileContents = file_get_contents($this->fullMainConfigFile);
-        $jsonDecoded = json_decode($jsonFileContents, true);
         
+        if (!$this->isJson($jsonFileContents)) {
+            throw new ConfigSystemSmileScreenException('ConfigSystem could not load settings file. Check it\'s syntax');
+        }
+         
+        $jsonDecoded = json_decode($jsonFileContents, true); 
         $this->configSettings = $this->changeArrayKeyRecursive($jsonDecoded);
     }
 
