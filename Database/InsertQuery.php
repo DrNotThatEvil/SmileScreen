@@ -61,7 +61,7 @@ class InsertQuery
         $statement = 'INSERT INTO ';
         $statement .= $this->table . ' ';
 
-        for($i=0; $i<count($this->columns); $i++) {
+        for ($i=0; $i<count($this->columns); $i++) {
             if ($i == 0) {
                 $statement .= '(';
             }
@@ -70,8 +70,7 @@ class InsertQuery
             $statement .= ( $i < (count($this->columns)-1) ? ', ' : ') ');
         }
 
-        if(!is_array($this->values[0])) 
-        {
+        if (!is_array($this->values[0])) {
             for($i=0; $i<count($this->values); $i++) {
                 if ($i == 0) {
                     $statement .= 'VALUES (';
@@ -83,7 +82,7 @@ class InsertQuery
             return $statement;
         }
 
-        for($i=0; $i<count($this->values); $i++) {
+        for ($i=0; $i<count($this->values); $i++) {
             if ($i == 0) {
                 $statement .= 'VALUES ';
             }
