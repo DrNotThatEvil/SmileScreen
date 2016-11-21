@@ -194,8 +194,10 @@ class DatabaseSystem extends Singleton
                 unset($attributes['updated_on']);
                 
                 $newModel = new $className($attributes, ModelStates::FROM_DATABASE); 
-                $newModel->setCreatedOn($results[$i]['created_on']);
-                $newModel->setUpdatedOn($results[$i]['updated_on']);
+                if ($model->usesTimestamps()) {
+                    $newModel->setCreatedOn($results[$i]['created_on']);
+                    $newModel->setUpdatedOn($results[$i]['updated_on']);
+                }
                 $modelsArray[] = $newModel;
             }
 
