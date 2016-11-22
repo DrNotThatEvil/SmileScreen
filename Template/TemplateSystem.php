@@ -10,12 +10,7 @@ use SmileScreen\Exceptions\GenericSmileScreenException as GenericSmileScreenExce
 class TemplateSystem extends Singleton
 {
     protected $configSystem;
-
     protected $fullTemplateDirectory;    
-    protected $fullTemplateCacheDirectory;
-
-    protected $twigLoader;
-    protected $twigEnviroment;
     
     protected function __construct() 
     {
@@ -24,12 +19,7 @@ class TemplateSystem extends Singleton
         $tmpTemplateDirectory = configFileSystem::getSiteRoot() . '/';
         $tmpTemplateDirectory .= $this->configSystem->getSetting('templates.templatedirectory');
         
-        $tmpCacheDirectory = configFileSystem::getSiteRoot() . '/';
-        $tmpCacheDirectory .= $this->configSystem->getSetting('templates.templatecachedirectory');
-
         $this->setTemplateDirectory($tmpTemplateDirectory);
-        $this->setTemplateCacheDirectory($tmpTemplateDirectory);
-        $this->loadTemplateEngine();
     }
 
     private function setTemplateDirectory(string $directory)
@@ -41,26 +31,10 @@ class TemplateSystem extends Singleton
         $this->fullTemplateDirectory = realpath($directory);
     }
 
-    private function setTemplateCacheDirectory(string $directory) 
+    public function renderTemplate(array $vars, string $file)
     {
-        if (!is_dir($directory)) {
-            throw new GenericSmileScreenException('Could not load template cache directory: ' . $directory . ' Does it exist?');
-        }
-
-        $this->fullTemplateCacheDirectory = realpath($directory);
-    }
-
-    private function loadTemplateEngine()
-    {
-        $this->twigLoader = new \Twig_Loader_Filesystem($this->fullTemplateDirectory);
-        $this->twigEnviroment = new \Twig_Environment($this->twigLoader, array(
-            'cache' => $this->twigEnviroment
-        ));
-    }
-
-    public function getTwigEnviroment()
-    {
-        return $this->twigEnviroment;
+        extract($vars);
+        include $this->fullTemplateDirectory . '/' . $file;
     }
     
 }

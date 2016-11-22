@@ -1,7 +1,6 @@
 <?php 
 namespace SmileScreen\Base;
 
-use Carbon\Carbon;
 use SmileScreen\Database as Database;
 
 /**
@@ -119,7 +118,7 @@ class BaseModel
             return; 
         }
 
-        $timestamp = Carbon::createFromFormat('Y-m-d H:i:s', $datetime);
+        $timestamp = \DateTime::createFromFormat('Y-m-d H:i:s', $datetime);
         
         if(strtolower($stamp) === 'created_on') 
         {
