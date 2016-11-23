@@ -190,7 +190,7 @@ class DatabaseSystem extends Singleton
      *
      * @param string $table the database table
      * @return array the array with required columns
-     * @throws \SmileScreen\Exceptions\DatabaseSmileScreenException
+     * @throws DatabaseSmileScreenException
      */
     private function getTableRequiredColumns(string $table)
     {
@@ -334,8 +334,8 @@ class DatabaseSystem extends Singleton
      * @param mixed $model
      * @param SelectQuery $where
      * @return array a array of the models it found in the database
-     * @throws \SmileScreen\Exceptions\GenericSmileScreenException
-     * @throws \SmileScreen\Exceptions\DatabaseSmileScreenException
+     * @throws GenericSmileScreenException
+     * @throws DatabaseSmileScreenException
      */
     public function modelsFromDatabase($model, SelectQuery $where)
     {

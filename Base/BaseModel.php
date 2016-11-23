@@ -6,7 +6,7 @@ use SmileScreen\Database as Database;
 /**
  * BaseModel a class for all models to extend and get usefull functionality
  *
- * @package SmileScreen\Base;
+ * @package SmileScreen\Base
  * @author Willmar Knikker <wil@wilv.in>
  * @version 0.1.0
  */
@@ -232,7 +232,7 @@ class BaseModel
      *
      * @param string $datetime 
      * @return void
-     * @see BaseModel \SmileScreen\Base\BaseModel::setTimestamp
+     * @see BaseModel::setTimestamp
      */
     public function setCreatedOn($datetime) {
         $this->setTimestamp('created_on', $datetime);
@@ -296,7 +296,7 @@ class BaseModel
      *
      * @param bool $includeId should it include the id in the values?
      * @return array A array of all the values for the database.
-     * @see \SmileScreen\Base\BaseModel::getAllDatabaseAttributes
+     * @see BaseModel::getAllDatabaseAttributes
      */
     public function getAllDatabaseValues($includeId = true) {
         $attributes = $this->getAllDatabaseAttributes($includeId);
@@ -328,7 +328,7 @@ class BaseModel
      * gets the models current modelstate
      *
      * @return int The state of the model
-     * @see \SmileScreen\Base\ModelStates
+     * @see ModelStates
      */
     public function getModelState()
     {
