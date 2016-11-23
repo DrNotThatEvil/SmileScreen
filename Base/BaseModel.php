@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace SmileScreen\Base;
 
 use SmileScreen\Database as Database;
@@ -12,36 +12,105 @@ use SmileScreen\Database as Database;
  */
 class BaseModel
 {
+    /**
+     * The primary key field in the database
+     * @var string
+     */
     protected $idField = 'id';
+
+    /**
+     * The id for the model from the database.
+     * @var int
+     */
     protected $id;
+
+    /**
+     * The database table for this model in the database
+     * @var string
+     */
     protected $table;
 
+    /**
+     * The values for this model.
+     * the values can be get and set by accessing ->value.
+     * @var array
+     */
     protected $values = array();
+
+    /**
+     * The hidden valudes for this model.
+     * These values can also get and set using ->value but are invisible by debug
+     * @var array
+     */
     protected $hiddenValues = array();
 
+    /**
+     * The attributes that come from the database.
+     * @var array
+     */
     protected $attributes = array();
+
+    /**
+     * The hidden attributes the come from the database.
+     * @var array
+     */
     protected $hidden = array();
 
-    protected $state = ModelStates::NOT_SAVED; 
+    /**
+     * The current state of the model this decides if the model needs to be save
+     * and if the model is form the database.
+     * @var int
+     */
+    protected $state = ModelStates::NOT_SAVED;
 
+    /**
+     * Sets if this model uses timestamps.
+     * @var boolean
+     */
     protected $timestamps = true;
+
+    /**
+     * The DateTime this model was created in the database.
+     * @var DateTime
+     */
     protected $created_on;
+
+    /**
+     * The DateTime this model was last updated in the database.
+     * @var DateTime
+     */
     protected $updated_on;
 
-    protected static function getClassSnake($className) 
+    /**
+     * Gets the snake case for class name
+     * @param  string $className The class name needed for snake case
+     * @return string The snake for the class.
+     */
+    protected static function getClassSnake(string $className)
     {
         return strtolower(preg_replace('/(?<!^)[A-Z]+/', '_$0', $className));
     }
 
-    protected function constructed($attributes = [], $state) 
+    protected function constructed($attributes = [], $state)
     {
     }
 
-    public static function make($attributes = []) 
+    /**
+     * The make function generates a new instance of this class
+     * @param  array $attributes The attributes for this class.
+     * @return object            The newly generated object.
+     */
+    public static function make($attributes = [])
     {
         return new static($attributes);
     }
 
+    /**
+     * This function creates a object if it is not found
+     * @param  [type] $attributes   [description]
+     * @param  string $whereCombine [description]
+     * @return [type]               [description]
+     */
     public static function insertIfNotExist($attributes, $whereCombine = 'OR')
     {
         $whereQuery = new Database\SelectQuery();
@@ -51,11 +120,12 @@ class BaseModel
         }
 
         $whereQuery->where($whereArray, $whereCombine);
-         
+
         $results = static::where($whereQuery);
 
         return $results;
     }
+
 
     public static function where(Database\SelectQuery $where)
     {
@@ -67,7 +137,7 @@ class BaseModel
         foreach($attributes as $attribute => $value) {
 
             if ($attribute === $this->idField) {
-                $this->id = $value; 
+                $this->id = $value;
                 continue;
             }
 
@@ -81,11 +151,11 @@ class BaseModel
         }
 
         $this->state = $state;
-  
+
         $this->constructed($attributes, $state);
     }
 
-    public function __debugInfo() 
+    public function __debugInfo()
     {
         $objectVars = get_object_vars($this);
         unset($objectVars['hiddenValues']);
@@ -93,12 +163,12 @@ class BaseModel
         return $objectVars;
     }
 
-    public function __set($name, $value) 
+    public function __set($name, $value)
     {
         $attributes = $this->getAllDatabaseAttributes(false);
         if(!in_array($name, $attributes))
         {
-            return; 
+            return;
         }
 
         if(in_array($name, $this->hidden)) {
@@ -112,15 +182,15 @@ class BaseModel
         $this->setModelState($this->state | ModelStates::NOT_SAVED);
     }
 
-    private function setTimestamp($stamp, $datetime) 
+    private function setTimestamp($stamp, $datetime)
     {
         if (is_null($datetime)) {
-            return; 
+            return;
         }
 
         $timestamp = \DateTime::createFromFormat('Y-m-d H:i:s', $datetime);
-        
-        if(strtolower($stamp) === 'created_on') 
+
+        if(strtolower($stamp) === 'created_on')
         {
             $this->created_on = $timestamp;
             return;
@@ -131,18 +201,18 @@ class BaseModel
 
     public function setCreatedOn($datetime) {
         $this->setTimestamp('created_on', $datetime);
-    } 
+    }
 
     public function setUpdatedOn($datetime) {
         $this->setTimestamp('updated_on', $datetime);
     }
 
-	public function usesTimestamps() 
+	public function usesTimestamps()
 	{
 		return $this->timestamps;
 	}
 
-    public function getDatabaseTable() 
+    public function getDatabaseTable()
     {
         if (!isset($this->table)) {
             return static::getClassSnake(get_called_class()) . 's';
@@ -151,19 +221,19 @@ class BaseModel
         return $this->table;
     }
 
-    public function getAllDatabaseAttributes(bool $includeId = true) 
+    public function getAllDatabaseAttributes(bool $includeId = true)
     {
         if ($includeId) {
             return array_merge([$this->idField], $this->attributes, $this->hidden);
         }
-        
+
         return array_merge($this->attributes, $this->hidden);
     }
 
     public function getAllDatabaseValues($includeId = true) {
         $attributes = $this->getAllDatabaseAttributes($includeId);
-       
-        $values = []; 
+
+        $values = [];
         foreach($attributes as $key => $attribute) {
             if ($attribute == $this->idField) {
                 $values[$key] = $this->id;
@@ -185,9 +255,9 @@ class BaseModel
 
         return $values;
     }
-   
+
     public function getModelState()
-    { 
+    {
         return $this->state;
     }
 
@@ -196,13 +266,13 @@ class BaseModel
 		if(($this->state & ModelStates::FROM_DATABASE) != 0 && ($state & ModelStates::FROM_DATABASE) == 0) {
 			// The model comes from the database.
 			// the state can now not suddenly say its not from there.
-			return false;	
+			return false;
 		}
 
 		$this->state = $state;
 	}
 
-    public function getIdField() 
+    public function getIdField()
     {
         return $this->idField;
     }
@@ -213,15 +283,15 @@ class BaseModel
 			// I can't really think of a reason why the id would ever need to be changed mid operation.
 			// Not only that but it's probably really bad practice to do so.
 			// Thats why if the id has been set. It can and should not be changed.
-			return false;		
+			return false;
 		}
-		
+
 		$this->id = $id;
 		return true;
     }
 
-    public function getId() 
+    public function getId()
     {
-        return $this->id; 
+        return $this->id;
     }
 }

@@ -1,8 +1,8 @@
 <?php
 namespace SmileScreen\Routing;
 
-class Route 
-{ 
+class Route
+{
 
     protected $method;
     protected $pattern;
@@ -16,30 +16,30 @@ class Route
     {
         return ltrim(rtrim($pattern), '/');
     }
-    
+
     public function __construct(string $method, string $pattern, $action)
     {
         $this->method = $method;
         $this->pattern = $this->stripUrlSlashes($pattern);
-        $this->action = $action; 
+        $this->action = $action;
 
         return $this;
     }
-    
+
     public function getPartsArray()
     {
         return preg_split('~\/(?![^()]*\))~', $this->pattern);
-    } 
+    }
 
     public function isPartRegex(int $part)
     {
         if ($part > (count($this->getPartsArray()) - 1)) {
-            return false; 
+            return false;
         }
- 
+
         $patternPart = $this->getPartsArray()[$part];
-        
-        if(substr($patternPart, 0, 1) !== '(' || substr($patternPart, -1) == ')') {
+
+        if(substr($patternPart, 0, 1) !== '(' || substr($patternPart, -1) !== ')') {
             return false; // the regex should start with a ( and end with a )
         }
 
@@ -48,20 +48,20 @@ class Route
         return preg_match("/^\/.+\/[a-z]*$/i", $patternRegex);
     }
 
-    public function addActionParameter($parameter) 
+    public function addActionParameter($parameter)
     {
         $this->actionParameters[] = $parameter;
     }
 
-    public function setDefault(bool $default) 
+    public function setDefault(bool $default)
     {
-        $this->defaultRoute = $default; 
+        $this->defaultRoute = $default;
     }
 
-    public function execute() 
+    public function execute()
     {
         if(is_callable($this->action)) {
-            call_user_func_array($this->action, $this->actionParameters); 
+            call_user_func_array($this->action, $this->actionParameters);
         }
 
         if(is_string($this->action)) {
@@ -69,7 +69,7 @@ class Route
             $methodName = explode('@', $this->action)[1];
             $object = new $className();
 
-            call_user_func_array(array($object, $methodName), $this->actionParameters);  
+            call_user_func_array(array($object, $methodName), $this->actionParameters);
         }
     }
 }
