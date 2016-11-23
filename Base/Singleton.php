@@ -1,6 +1,17 @@
 <?php
 namespace SmileScreen\Base;
 
+/**
+ * Singleton
+ * Singleton base class
+ * This abstract class needs to be exteded 
+ * when extended it will prevent multiple instances of a object
+ * to exist. Pretty simple stuff.
+ *
+ * @package \SmileScreen\Base
+ * @author Willmar Knikker aka <wil@wilv.in>
+ * @version 0.1.0
+ */
 abstract class Singleton
 {
     /**

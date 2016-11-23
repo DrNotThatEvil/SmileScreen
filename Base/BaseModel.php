@@ -4,9 +4,9 @@ namespace SmileScreen\Base;
 use SmileScreen\Database as Database;
 
 /**
- * BaseModel
+ * BaseModel a class for all models to extend and get usefull functionality
  *
- * @package  Smilescreen\Base
+ * @package SmileScreen\Base;
  * @author Willmar Knikker <wil@wilv.in>
  * @version 0.1.0
  */
@@ -106,10 +106,10 @@ class BaseModel
     }
 
     /**
-     * This function creates a object if it is not found
-     * @param  [type] $attributes   [description]
-     * @param  string $whereCombine [description]
-     * @return [type]               [description]
+     * This function creates a object if it is not found in the databas 
+     * @param  array $attributes   The attributes of model.
+     * @param  string $whereCombine The Where combiner 'OR' (default) | 'AND' 
+     * @return object               The model from the database or a newly saved model.
      */
     public static function insertIfNotExist($attributes, $whereCombine = 'OR')
     {
@@ -126,10 +126,17 @@ class BaseModel
         return $results;
     }
 
-
+    
+    /**
+     * Gets a list of objects matching to the SelectQuery
+     *
+     * @param Database\SelectQuery $where
+     * @return array A array of objects or a empty array
+     */
     public static function where(Database\SelectQuery $where)
     {
-        return (Database\DatabaseSystem::getInstance())->modelsFromDatabase(new static(), $where);
+        $database = Database\DatabaseSystem::getInstance();
+        $datbase->modelsFromDatabase(new static(), $where);
     }
 
     public function __construct($attributes = [], $state = ModelStates::NOT_SAVED)
@@ -155,6 +162,11 @@ class BaseModel
         $this->constructed($attributes, $state);
     }
 
+    /**
+     * Hides the hiddenValues array from debug printout
+     *
+     * @return void
+     */
     public function __debugInfo()
     {
         $objectVars = get_object_vars($this);
@@ -163,6 +175,14 @@ class BaseModel
         return $objectVars;
     }
 
+    /**
+     * The magic set method checks if you are trying to set a
+     * parameter in Attriubtes or the HiddenAtributes and sets it.
+     *
+     * @param mixed $name Name of the value
+     * @param mixed $value The value
+     * @return void
+     */
     public function __set($name, $value)
     {
         $attributes = $this->getAllDatabaseAttributes(false);
@@ -182,7 +202,14 @@ class BaseModel
         $this->setModelState($this->state | ModelStates::NOT_SAVED);
     }
 
-    private function setTimestamp($stamp, $datetime)
+    /**
+     * Sets the timestamp of this object.
+     *
+     * @param string $stamp The timestamp that needs to be set
+     * @param string $datetime A Y-m-d H:i:s datetime string of the date.
+     * @return void
+     */
+    private function setTimestamp(string $stamp, $datetime)
     {
         if (is_null($datetime)) {
             return;
@@ -199,19 +226,45 @@ class BaseModel
         $this->updated_on = $timestamp;
     }
 
+    /**
+     * Sets the crated on timestamp of the model. 
+     * Mostly syntactic sugar
+     *
+     * @param string $datetime 
+     * @return void
+     * @see BaseModel \SmileScreen\Base\BaseModel::setTimestamp
+     */
     public function setCreatedOn($datetime) {
         $this->setTimestamp('created_on', $datetime);
     }
 
+    /**
+     * Sets the updated on timestamp of the model.
+     * Mostly syntactic sugar
+     *
+     * @param mixed $datetime
+     * @return void
+     * @see \SmileScreen\Base\BaseModel::setTimestamp
+     */
     public function setUpdatedOn($datetime) {
         $this->setTimestamp('updated_on', $datetime);
     }
 
+	/**
+	 * Returns if this model uses timestamps
+	 *
+	 * @return boolean True if this model uses Timestamps False if not
+	 */
 	public function usesTimestamps()
 	{
 		return $this->timestamps;
 	}
 
+    /**
+     * Gets the database table of this model.
+     *
+     * @return string the database table of this model
+     */
     public function getDatabaseTable()
     {
         if (!isset($this->table)) {
@@ -221,6 +274,12 @@ class BaseModel
         return $this->table;
     }
 
+    /**
+     * Returns all database attributes of this model
+     *
+     * @param bool $includeId Should it include the Id in the attributes?
+     * @return array array of the dataabase attributes of this model.
+     */
     public function getAllDatabaseAttributes(bool $includeId = true)
     {
         if ($includeId) {
@@ -230,6 +289,15 @@ class BaseModel
         return array_merge($this->attributes, $this->hidden);
     }
 
+    /**
+     * Returns all databse values for this model
+     * The order of the values is the same as the order of the attributes returned
+     * by getAllDatabaseAttributes
+     *
+     * @param bool $includeId should it include the id in the values?
+     * @return array A array of all the values for the database.
+     * @see \SmileScreen\Base\BaseModel::getAllDatabaseAttributes
+     */
     public function getAllDatabaseValues($includeId = true) {
         $attributes = $this->getAllDatabaseAttributes($includeId);
 
@@ -256,12 +324,26 @@ class BaseModel
         return $values;
     }
 
+    /**
+     * gets the models current modelstate
+     *
+     * @return int The state of the model
+     * @see \SmileScreen\Base\ModelStates
+     */
     public function getModelState()
     {
         return $this->state;
     }
-
-	public function setModelState($state)
+    
+	/**
+     * Sets the current state of the model.
+     * Please note a models state can not be changed from FROM_DATABASE
+     * ModelStates are binary numbers to make oprations easier
+	 *
+	 * @param int $state
+	 * @return boolean true if the state was succesfully set
+	 */
+	public function setModelState(int $state)
 	{
 		if(($this->state & ModelStates::FROM_DATABASE) != 0 && ($state & ModelStates::FROM_DATABASE) == 0) {
 			// The model comes from the database.
@@ -269,14 +351,28 @@ class BaseModel
 			return false;
 		}
 
-		$this->state = $state;
+        $this->state = $state;
+        return true;
 	}
 
+    /**
+     * Gets the id field of this model usefull for the database system.
+     *
+     * @return string The id field in the databae.
+     */
     public function getIdField()
     {
         return $this->idField;
     }
 
+	/**
+     * Sets the id of this model.
+     * Warning its not possible to change a already assigned id cause
+     * this would most certainly damage the intergrity of the database when saved.
+	 *
+	 * @param int $id
+	 * @return boolean true if succesully set false otherwise
+	 */
 	public function setId($id)
 	{
 		if (isset($this->id)) {
@@ -290,6 +386,11 @@ class BaseModel
 		return true;
     }
 
+    /**
+     * gets the id of this model 
+     *
+     * @return id the id of the model
+     */
     public function getId()
     {
         return $this->id;
