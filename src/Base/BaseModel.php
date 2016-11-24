@@ -82,6 +82,30 @@ class BaseModel
     protected $updated_on;
 
     /**
+     * Sets the timestamp of this object.
+     *
+     * @param string $stamp The timestamp that needs to be set
+     * @param string $datetime A Y-m-d H:i:s datetime string of the date.
+     * @return void
+     */
+    private function setTimestamp(string $stamp, $datetime)
+    {
+        if (is_null($datetime)) {
+            return;
+        }
+
+        $timestamp = \DateTime::createFromFormat('Y-m-d H:i:s', $datetime);
+
+        if(strtolower($stamp) === 'created_on')
+        {
+            $this->created_on = $timestamp;
+            return;
+        }
+
+        $this->updated_on = $timestamp;
+    }
+
+    /**
      * Gets the snake case for class name
      * @param  string $className The class name needed for snake case
      * @return string The snake for the class.
@@ -91,10 +115,43 @@ class BaseModel
         return strtolower(preg_replace('/(?<!^)[A-Z]+/', '_$0', $className));
     }
 
+    /**
+     * This method is always called when a model is made.
+     * it should be overwritten by extending the model.
+     *
+     * @param array $attributes
+     * @param int $state
+     * @return void
+     */
     protected function constructed($attributes = [], $state)
     {
     }
 
+    /**
+     * This function is called before a the model is saved.
+     * Its intended to be used to do checks on the model cause if it
+     * returns false the model will not save.
+     * by default it always returns true so models will always save if they are correctly filled.
+     *
+     * @return boolean 
+     */
+    protected function canSave() 
+    {
+        return true; 
+    }
+
+    /**
+     * This function is called before the model is deleted.
+     * if it returns false the model can't be deleted.
+     * it should be overwritten by a extending model peform checks before deletion.
+     *
+     * @return boolean
+     */
+    protected function canBeDeleted()
+    {
+        return true; 
+    }
+  
     /**
      * The make function generates a new instance of this class
      * @param  array $attributes The attributes for this class.
@@ -103,6 +160,20 @@ class BaseModel
     public static function make($attributes = [])
     {
         return new static($attributes);
+    }
+
+    /**
+     * Makes a new model and saves it to the database.
+     *
+     * @param mixed $attributes
+     * @return void
+     */
+    public static function create($attributes = [])
+    {
+        $model = new static($attributes);
+        $model->save();
+
+        return $model;
     }
 
     /**
@@ -122,10 +193,15 @@ class BaseModel
         $whereQuery->where($whereArray, $whereCombine);
 
         $results = static::where($whereQuery);
+        if(count($results) == 0) {
+            $newModel = new static($attributes);
+            $newModel->save();
 
-        return $results;
+            return $newModel[0];
+        }
+
+        return $results[0];
     }
-
     
     /**
      * Gets a list of objects matching to the SelectQuery
@@ -137,6 +213,23 @@ class BaseModel
     {
         $database = Database\DatabaseSystem::getInstance();
         return $database->modelsFromDatabase(new static(), $where);
+    }
+
+    /**
+     * A simpler function of the ::where function.
+     * it's passed a array following the syntax of SelectQuery->where
+     * but this function handles the creation of the SelectQuery for you making it
+     * faster to use.
+     *
+     * @param array $whereArray
+     * @return array A array of modes found that match the where cirteria.
+     */
+    public static function simpleWhere(array $whereArray) 
+    {
+        $selectQuery = Database\SelectQuery(); 
+        $selectQuery->where($whereArray);
+
+        return static::where($selectQuery);
     }
 
     public function __construct($attributes = [], $state = ModelStates::NOT_SAVED)
@@ -158,7 +251,6 @@ class BaseModel
         }
 
         $this->state = $state;
-
         $this->constructed($attributes, $state);
     }
 
@@ -175,10 +267,19 @@ class BaseModel
         return $objectVars;
     }
 
+    /**
+     * The save method saves the model in the database.
+     *
+     * @return boolean true if the saving was succesfully saved false if otherwise
+     */
     public function save() 
     {
+        if (!$this->canSave()) {
+            return false; 
+        }
+
         $dbSystem = Database\DatabaseSystem::getInstance(); 
-        $dbSystem->saveModelToDatabase($this);
+        return $dbSystem->saveModelToDatabase($this);
     }
 
     /**
@@ -208,28 +309,13 @@ class BaseModel
         $this->setModelState($this->state | ModelStates::NOT_SAVED);
     }
 
-    /**
-     * Sets the timestamp of this object.
-     *
-     * @param string $stamp The timestamp that needs to be set
-     * @param string $datetime A Y-m-d H:i:s datetime string of the date.
-     * @return void
-     */
-    private function setTimestamp(string $stamp, $datetime)
+    public function delete()
     {
-        if (is_null($datetime)) {
-            return;
+        if (!$this->canBeDeleted()) {
+            return false;
         }
 
-        $timestamp = \DateTime::createFromFormat('Y-m-d H:i:s', $datetime);
 
-        if(strtolower($stamp) === 'created_on')
-        {
-            $this->created_on = $timestamp;
-            return;
-        }
-
-        $this->updated_on = $timestamp;
     }
 
     /**

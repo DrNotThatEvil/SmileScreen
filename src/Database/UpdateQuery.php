@@ -1,10 +1,10 @@
 <?php
 namespace SmileScreen\Database;
 
-class UpdateQuery 
-{
-    protected $table;
+use SmileScreen\Database\Query as Query;
 
+class UpdateQuery extends Query
+{
     protected $idField = 'id';
 
     protected $id;
@@ -15,12 +15,6 @@ class UpdateQuery
 
     public function __construct() 
     {
-        return $this;
-    }
-
-    public function setTable(string $table)
-    {
-        $this->table = $table;
         return $this;
     }
 

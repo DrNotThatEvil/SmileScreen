@@ -1,22 +1,16 @@
 <?php
 namespace SmileScreen\Database;
 
-class InsertQuery 
-{
-    protected $table;
+use SmileScreen\Database\Query as Query;
 
+class InsertQuery extends Query
+{
     protected $columns = [];
     
     protected $values = [];
 
     public function __construct() 
     {
-        return $this;
-    }
-
-    public function setTable(string $table)
-    {
-        $this->table = $table;
         return $this;
     }
 

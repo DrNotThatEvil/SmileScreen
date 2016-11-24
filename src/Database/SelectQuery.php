@@ -2,10 +2,9 @@
 namespace SmileScreen\Database;
 
 use SmileScreen\Exceptions\DatabaseSmileScreenException as DatabaseSmileScreenException;
+use SmileScreen\Database\Query as Query;
 
-class SelectQuery {
-    protected $table;
-
+class SelectQuery extends Query {
     protected $select = array();
 
     protected $where = array();
