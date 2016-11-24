@@ -598,8 +598,8 @@ class DatabaseSystem extends Singleton
                 // we loop through all the variables we set using insertColumns
                 if(is_null($insertValues[$key])) {
                     // if the variable is null we cant use it to compare stuff so we drop it by moving on
-					continue;
-				}
+					          continue;
+				        }
                 $whereArray[$attribute] = ['=', $insertValues[$key]];
                 // we add part of the where to the $whereArray
             }

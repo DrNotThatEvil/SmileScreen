@@ -136,7 +136,7 @@ class BaseModel
     public static function where(Database\SelectQuery $where)
     {
         $database = Database\DatabaseSystem::getInstance();
-        $datbase->modelsFromDatabase(new static(), $where);
+        return $database->modelsFromDatabase(new static(), $where);
     }
 
     public function __construct($attributes = [], $state = ModelStates::NOT_SAVED)
@@ -173,6 +173,12 @@ class BaseModel
         unset($objectVars['hiddenValues']);
 
         return $objectVars;
+    }
+
+    public function save() 
+    {
+        $dbSystem = Database\DatabaseSystem::getInstance(); 
+        $dbSystem->saveModelToDatabase($this);
     }
 
     /**
