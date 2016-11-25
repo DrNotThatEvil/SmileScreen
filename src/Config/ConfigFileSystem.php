@@ -23,13 +23,16 @@ class ConfigFileSystem extends Singleton
      *
      * @return string The realpath of the site's root directory
      */
-
-    public static function getSiteRoot($file = __DIR__) 
+    public static function getSiteRoot($file = null) 
     {
+        if (is_null($file)) {
+            $file = $_SERVER['DOCUMENT_ROOT'];
+        }
+
         if (is_dir($file . '/app')) {
             return $file;
         } else {
-            return static::getSiteRoot( $file . '/../' );
+            return static::getSiteRoot(realpath($file . '/../'));
         }
     }    
 
