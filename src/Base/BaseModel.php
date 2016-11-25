@@ -179,10 +179,10 @@ class BaseModel
     /**
      * This function creates a object if it is not found in the databas 
      * @param  array $attributes   The attributes of model.
-     * @param  string $whereCombine The Where combiner 'OR' (default) | 'AND' 
+     * @param  string $whereCombine The Where combiner 'AND' (default) | 'OR' 
      * @return object               The model from the database or a newly saved model.
      */
-    public static function insertIfNotExist($attributes, $whereCombine = 'OR')
+    public static function insertIfNotExist($attributes, $whereCombine = 'AND')
     {
         $whereQuery = new Database\SelectQuery();
         $whereArray = [];
@@ -197,7 +197,7 @@ class BaseModel
             $newModel = new static($attributes);
             $newModel->save();
 
-            return $newModel[0];
+            return $newModel;
         }
 
         return $results[0];
@@ -226,7 +226,7 @@ class BaseModel
      */
     public static function simpleWhere(array $whereArray) 
     {
-        $selectQuery = Database\SelectQuery(); 
+        $selectQuery = new Database\SelectQuery(); 
         $selectQuery->where($whereArray);
 
         return static::where($selectQuery);
@@ -293,17 +293,16 @@ class BaseModel
     public function __set($name, $value)
     {
         $attributes = $this->getAllDatabaseAttributes(false);
-        if(!in_array($name, $attributes))
-        {
+        if (!in_array($name, $attributes)) {
             return;
         }
 
-        if(in_array($name, $this->hidden)) {
+        if (in_array($name, $this->hidden)) {
             $this->hiddenValues[$name] = $value;
         }
 
-        if(in_array($name, $this->attributes)) {
-            $this->hiddenValues[$name] = $value;
+        if (in_array($name, $this->attributes)) {
+            $this->values[$name] = $value;
         }
 
         $this->setModelState($this->state | ModelStates::NOT_SAVED);
