@@ -215,6 +215,12 @@ class BaseModel
         return $database->modelsFromDatabase(new static(), $where);
     }
 
+    public static function all() 
+    {
+        $selectQuery = new Database\SelectQuery();
+        return static::where($selectQuery); 
+    }
+
     /**
      * A simpler function of the ::where function.
      * it's passed a array following the syntax of SelectQuery->where

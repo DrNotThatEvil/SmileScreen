@@ -356,7 +356,7 @@ class DatabaseSystem extends Singleton
         $where->setTable($modelTableName);
         // We set the SelectQuery's table to this table
         
-        $where->select(['*', 'count(*) as cnt']);
+        $where->select(['*']);
         // We select everything from the table plus a count variable this is makes later logic easier 
 
         if (!in_array($modelTableName, $this->tables)) {
@@ -369,6 +369,7 @@ class DatabaseSystem extends Singleton
         // here we get the things that need to be filled by the database.
 
         $whereStatement = $where->getStatement();
+        
         // We get the where statment from the SelectQuery
         // Get statment returns a array.
         // The first part is always a SQL query we use in the ->prepare function
@@ -382,7 +383,7 @@ class DatabaseSystem extends Singleton
             $results = $fillStatment->fetchAll(PDO::FETCH_ASSOC);
             // get all the data in a associative array ( google associative array if you want to know more! )
 
-            if ($results[0]['cnt'] == 0) {
+            if (count($results) == 0) {
                 // the count value was zero we have no results 
                 // returning a empty array is the right thing to do at this point
                 return [];
