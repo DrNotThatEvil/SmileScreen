@@ -314,6 +314,26 @@ class BaseModel
         $this->setModelState($this->state | ModelStates::NOT_SAVED);
     }
 
+    public function __get($name)
+    {
+        $attributes = $this->getAllDatabaseAttributes(false);
+        if ($name == 'id') {
+            return $this->id;
+        }
+
+        if (!in_array($name, $attributes)){
+            return;        
+        }
+
+        if (in_array($name, $this->hidden)) {
+            return $this->hiddenValues[$name]; 
+        }
+
+        if (in_array($name, $this->attributes)) {
+            return $this->values[$name]; 
+        }
+    }
+
     public function delete()
     {
         if (!$this->canBeDeleted()) {
