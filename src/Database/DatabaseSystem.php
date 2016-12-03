@@ -10,6 +10,7 @@ use SmileScreen\Config\ConfigSystem as ConfigSystem;
 use SmileScreen\Database\SelectQuery as SelectQuery;
 use SmileScreen\Database\InsertQuery as InsertQuery;
 use SmileScreen\Database\UpdateQuery as UpdateQuery;
+use SmileScreen\Database\DeleteQuery as DeleteQuery;
 
 use \PDO as PDO;
 
@@ -464,6 +465,21 @@ class DatabaseSystem extends Singleton
         return false;
         // this code should actually never be reached 
         // but if we do somehow get here it cant be good so we retrun false.
+    }
+
+    public function runDeleteQuery(DeleteQuery $query) 
+    {
+        if(!$query->isValid()) {
+            return false; 
+        }
+
+        try {
+            $sql = $query->getStatement();
+            $deleteStatement = $this->pdoObject->prepare($sql);
+            $deleteStatement->execute([ $query->getId() ]);
+        } catch (PDOException $e) {
+            return false; 
+        }
     }
 
     /**

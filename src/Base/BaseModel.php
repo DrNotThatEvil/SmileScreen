@@ -340,7 +340,18 @@ class BaseModel
             return false;
         }
 
+        if (($this->state & ModelStates::FROM_DATABASE) == 0) {
+            // model can't be deleted since its not even from the database.
+            return false; 
+        }
 
+        $deleteQuery = new Database\DeleteQuery();
+        $deleteQuery->setTable($this->getDatabaseTable());
+        $deleteQuery->setIdField($this->idField);
+        $deleteQuery->setId($this->id);
+
+        $databaseSystem = Database\DatabaseSystem::getInstance();
+        $databaseSystem->runDeleteQuery($deleteQuery);
     }
 
     /**
