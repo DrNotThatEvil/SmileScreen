@@ -49,16 +49,17 @@ class Router extends Singleton
     private function matchRouteParts(array $urlExploded, array $routeParts, Route $route) 
     {
         $routeMatch = false;
-        
+
         for ($i=0; $i<count($routeParts); $i++) {
             $lastPart = ($i == (count($routeParts)-1)); // Check if its the last part.
-
+            //var_dump($routeParts[$i]);
             if ($routeParts[$i] === $urlExploded[$i] && !$route->isPartRegex($i)) {
                 // The route parts match. if this is the last part we have a match.
                 // Also the routepart is not a regex
                 // We check that to see if there not literally using a regex as url.
-                      
+                // echo $routeParts[$i] . ' === ' . $urlExploded[$i] . ' = ' . ($routeParts[$i] == $urlExploded[$i]) . '<br />';
                 $routeMatch = $lastPart;
+                continue;
             }
 
             if ($routeParts[$i] !== $urlExploded[$i] && $route->isPartRegex($i)) {
@@ -75,8 +76,11 @@ class Router extends Singleton
                     }
 
                     $routeMatch = $lastPart;
+                    continue;
                 }
             }
+
+            break; 
         }
 
         return $routeMatch;
@@ -132,7 +136,9 @@ class Router extends Singleton
     public function startRouter() 
     {
         $urlExploded = explode('/', $this->calculateUrlRoute());
-        
+        //var_dump($urlExploded);
+        //echo '<br />';
+
         if (!isset($this->routes[$_SERVER['REQUEST_METHOD']])) {
             $this->routes[$_SERVER['REQUEST_METHOD']] = [];
         }
@@ -142,6 +148,9 @@ class Router extends Singleton
         $foundRoute = null; 
         foreach($methodRoutes as $route) {
             $routeParts = $route->getPartsArray();
+
+            //var_dump($routeParts);
+            //echo '<br />';
             
             if (count($urlExploded) == count($routeParts)) {
                 if ($this->matchRouteParts($urlExploded, $routeParts, $route)) {

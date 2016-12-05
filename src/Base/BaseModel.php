@@ -2,6 +2,8 @@
 namespace SmileScreen\Base;
 
 use SmileScreen\Database as Database;
+use SmileScreen\Session as Session;
+use SmileScreen\Hash\PasswordHash as PasswordHash;
 
 /**
  * BaseModel a class for all models to extend and get usefull functionality
@@ -80,6 +82,15 @@ class BaseModel
      * @var DateTime
      */
     protected $updated_on;
+
+
+    /**
+     * This variable sets if this moddel can be logged in 
+     * aka stored in a session.
+     *
+     * @var bool
+     */
+    protected $canBeLoggedIn = false;
 
     /**
      * Sets the timestamp of this object.
@@ -236,6 +247,41 @@ class BaseModel
         $selectQuery->where($whereArray);
 
         return static::where($selectQuery);
+    }
+
+    /**
+     * Syntatic sugar wrapper for the SessionSystem.
+     * This gets the logged model from the SessionSystem.
+     *
+     * @return mixed A model from the session False otherwise
+     * @throws SmileScreen\Exceptions\SessionSmileScreenException
+     */
+    public static function getLoggedIn()
+    {
+        // This is just a neat syntatic sugar function
+        // the only thing it does is run a function on the SessionSystem.
+        
+        // This function returns false or a model from the database thats stored
+        // in the session.
+    
+        $sessionSystem = Session\SessionSystem::getInstance();
+        return $sessionSystem->getLoggedInModel(static::make());
+    }
+
+    /**
+     * Gets the model by username and password.
+     * This is also a syntatic sugar function since the only thing it is is a nice wraper
+     * around the PasswordHash::getModelByLogin function.
+     *
+     * @param string $username The username
+     * @param string $password The password
+     * @param string $usernameField The database column storing the usernames
+     * @param string $passwordField The database column storing the password
+     * @return mixed Returns the model matching the login details. False if no match was found
+     */
+    public static function getByLogin($username, $password, $usernameField = 'email', $passwordField = 'password')
+    {
+        return PasswordHash::getModelByLogin(static::make(), $username, $password, $usernameField, $passwordField);
     }
 
     public function __construct($attributes = [], $state = ModelStates::NOT_SAVED)
@@ -522,5 +568,15 @@ class BaseModel
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Returns if this model can be used for login.
+     * Aka can be stored in the session.
+     *
+     * @return bool
+     */
+    public function getCanBeLoggedIn() {
+        return $this->canBeLoggedIn; 
     }
 }

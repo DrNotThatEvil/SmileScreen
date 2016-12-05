@@ -11,7 +11,7 @@ class PasswordHash
     }
 
 
-    public static function getUserByLogin($model, $username, $password, 
+    public static function getModelByLogin($model, $username, $password, 
         $usernameField = 'email', $passwordField = 'password') 
     {
         $select = new Database\SelectQuery();
