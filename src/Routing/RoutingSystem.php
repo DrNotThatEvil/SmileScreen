@@ -211,7 +211,15 @@ class Router extends Singleton
         }
     
         
-        return $foundRoute->execute(); 
+        $result = $foundRoute->execute(); 
+        if (!is_null($result)) {
+            if (get_class($result) == 'SmileScreen\Routing\Response') {
+                $result->execute();
+            }
+        }
+
+        return true;
+        // if ($result =)
     }
     
 }

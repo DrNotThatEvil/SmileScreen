@@ -61,7 +61,7 @@ class Route
     public function execute()
     {
         if(is_callable($this->action)) {
-            call_user_func_array($this->action, $this->actionParameters);
+            return call_user_func_array($this->action, $this->actionParameters);
         }
 
         if(is_string($this->action)) {
@@ -69,7 +69,7 @@ class Route
             $methodName = explode('@', $this->action)[1];
             $object = new $className();
 
-            call_user_func_array(array($object, $methodName), $this->actionParameters);
+            return call_user_func_array(array($object, $methodName), $this->actionParameters);
         }
     }
 }
