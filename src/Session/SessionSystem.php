@@ -21,7 +21,7 @@ class SessionSystem extends Singleton
             return false; 
         }
 
-        if (empty($_SESSION['model_id'])) {
+        if ($_SESSION['model_id'] < -1) {
             return false; 
         }
 
