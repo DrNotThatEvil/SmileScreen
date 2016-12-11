@@ -73,6 +73,10 @@ class Route
                     if($middlewareResult === false) {
                         return false; 
                     }
+
+                    if (get_class($middlewareResult) == 'SmileScreen\Routing\Response') {
+                        return $middlewareResult;
+                    }
                 }
             } else {
                 $className = explode('@', $this->routeOptions['middleware'])[0];
@@ -82,6 +86,10 @@ class Route
                 $middlewareResult = call_user_func_array(array($object, $methodName));
                 if($middlewareResult === false) {
                     return false; 
+                }
+                
+                if (get_class($middlewareResult) == 'SmileScreen\Routing\Response') {
+                    return $middlewareResult;
                 }
             }
         }
