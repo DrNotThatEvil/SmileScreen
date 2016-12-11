@@ -74,8 +74,10 @@ class Route
                         return false; 
                     }
 
-                    if (get_class($middlewareResult) == 'SmileScreen\Routing\Response') {
-                        return $middlewareResult;
+                    if($middlewareResult !== true) {
+                        if (get_class($middlewareResult) == 'SmileScreen\Routing\Response') {
+                            return $middlewareResult;
+                        }
                     }
                 }
             } else {
@@ -87,9 +89,11 @@ class Route
                 if($middlewareResult === false) {
                     return false; 
                 }
-                
-                if (get_class($middlewareResult) == 'SmileScreen\Routing\Response') {
-                    return $middlewareResult;
+
+                if ($middlewareResult !== true) {
+                    if (get_class($middlewareResult) == 'SmileScreen\Routing\Response') {
+                        return $middlewareResult;
+                    }
                 }
             }
         }
