@@ -69,7 +69,7 @@ class Route
                     $methodName = explode('@', $middleware)[1];
                     $object = new $className();
                     
-                    $middlewareResult = call_user_func_array(array($object, $methodName));
+                    $middlewareResult = call_user_func(array($object, $methodName));
                     if($middlewareResult === false) {
                         return false; 
                     }
@@ -83,7 +83,7 @@ class Route
                 $methodName = explode('@', $this->routeOptions['middleware'])[1];
                 $object = new $className();
                     
-                $middlewareResult = call_user_func_array(array($object, $methodName));
+                $middlewareResult = call_user_func(array($object, $methodName));
                 if($middlewareResult === false) {
                     return false; 
                 }
