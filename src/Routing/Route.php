@@ -64,7 +64,7 @@ class Route
     {
         if (array_key_exists('middleware', $this->routeOptions)) {
             if (is_array($this->routeOptions['middleware'])) { 
-                foreach($this->routeOptions['middleware'] as $middeware) {
+                foreach($this->routeOptions['middleware'] as $middleware) {
                     $className = explode('@', $middleware)[0];
                     $methodName = explode('@', $middleware)[1];
                     $object = new $className();
