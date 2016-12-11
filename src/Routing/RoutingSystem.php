@@ -7,6 +7,7 @@ use SmileScreen\Routing\Route as Route;
 class Router extends Singleton 
 {
     protected $prefix = '';
+    protected $optionsPrefix = []
     protected $routes = [];
     protected $defaultRoute;
 
@@ -32,12 +33,14 @@ class Router extends Singleton
         return $requestUrl;
     }
 
-    private function addRoute(string $method, string $pattern, $action) 
+    private function addRoute(string $method, string $pattern, $action, $ops = []) 
     {
         $method = strtoupper($method);
         $fullPattern = $this->prefix . $pattern;
 
-        $route = new Route($method, $fullPattern, $action);
+        $options = array_merge_recursive($optionsPrefix, $ops);
+
+        $route = new Route($method, $fullPattern, $action, $options);
         
         if (!isset($this->routes[$method])) {
             $this->routes[$method] = [];
@@ -57,7 +60,6 @@ class Router extends Singleton
                 // The route parts match. if this is the last part we have a match.
                 // Also the routepart is not a regex
                 // We check that to see if there not literally using a regex as url.
-                // echo $routeParts[$i] . ' === ' . $urlExploded[$i] . ' = ' . ($routeParts[$i] == $urlExploded[$i]) . '<br />';
                 $routeMatch = $lastPart;
                 continue;
             }
@@ -86,43 +88,45 @@ class Router extends Singleton
         return $routeMatch;
     }
 
-    public function get(string $pattern, $action)
+    public function get(string $pattern, $action, $ops = [])
     {
-        $this->addRoute('GET', $pattern, $action); 
+        $this->addRoute('GET', $pattern, $action, $ops); 
     }
 
-    public function post($pattern, $action)
+    public function post($pattern, $action, $ops = [])
     {
-        $this->addRoute('POST', $pattern, $action);
+        $this->addRoute('POST', $pattern, $action, $ops);
     }
 
-    public function put(string $pattern, $action)
+    public function put(string $pattern, $action, $ops = [])
     {
-        $this->addRoute('PUT', $pattern, $action);
+        $this->addRoute('PUT', $pattern, $action, $ops);
     }
 
-    public function delete(string $pattern, $action)
+    public function delete(string $pattern, $action, $ops = [])
     {
-        $this->addRoute('DELETE', $pattern, $action);
+        $this->addRoute('DELETE', $pattern, $action, $ops);
     }
 
-    public function options(string $pattern, $action)
+    public function options(string $pattern, $action, $ops = [])
     {
-        $this->addRoute('OPTIONS', $pattern, $action); 
+        $this->addRoute('OPTIONS', $pattern, $action, $ops); 
     }
 
-    public function patch(string $pattern, $action) 
+    public function patch(string $pattern, $action, $ops = []) 
     {
-        $this->addRoute('PATCH', $pattern, $action); 
+        $this->addRoute('PATCH', $pattern, $action, $ops); 
     }
 
-    public function group(string $pattern, callable $fn)
+    public function group(string $pattern, callable $fn, $ops = [])
     {
         $this->prefix = $pattern;
+        $this->optionsPrefix = $ops;
 
         call_user_func($fn);
 
         $this->prefix = ''; 
+        $this->optionsPrefix = [];
     }
 
     public function defaultRoute($action)

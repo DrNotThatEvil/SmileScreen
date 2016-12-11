@@ -11,17 +11,19 @@ class Route
     protected $defaultRoute = false;
 
     protected $actionParameters = [];
+    protected $routeOptions = [];
 
     private function stripUrlSlashes(string $pattern)
     {
         return ltrim(rtrim($pattern), '/');
     }
 
-    public function __construct(string $method, string $pattern, $action)
+    public function __construct(string $method, string $pattern, $action, $ops = [])
     {
         $this->method = $method;
         $this->pattern = $this->stripUrlSlashes($pattern);
         $this->action = $action;
+        $this->routeOptions = $ops;
 
         return $this;
     }
@@ -60,11 +62,35 @@ class Route
 
     public function execute()
     {
-        if(is_callable($this->action)) {
+        if (array_key_exists('middleware', $this->routeOptions)) {
+            if (is_array($this->routeOptions['middleware'])) { 
+                foreach($this->routeOptions['middleware'] as $middeware) {
+                    $className = explode('@', $middleware)[0];
+                    $methodName = explode('@', $middleware)[1];
+                    $object = new $className();
+                    
+                    $middlewareResult = call_user_func_array(array($object, $methodName));
+                    if($middlewareResult === false) {
+                        return false; 
+                    }
+                }
+            } else {
+                $className = explode('@', $this->routeOptions['middleware'])[0];
+                $methodName = explode('@', $this->routeOptions['middleware'])[1];
+                $object = new $className();
+                    
+                $middlewareResult = call_user_func_array(array($object, $methodName));
+                if($middlewareResult === false) {
+                    return false; 
+                }
+            }
+        }
+
+        if (is_callable($this->action)) {
             return call_user_func_array($this->action, $this->actionParameters);
         }
 
-        if(is_string($this->action)) {
+        if (is_string($this->action)) {
             $className = explode('@', $this->action)[0];
             $methodName = explode('@', $this->action)[1];
             $object = new $className();
