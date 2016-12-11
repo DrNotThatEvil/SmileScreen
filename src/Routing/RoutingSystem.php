@@ -38,7 +38,7 @@ class Router extends Singleton
         $method = strtoupper($method);
         $fullPattern = $this->prefix . $pattern;
 
-        $options = array_merge_recursive($optionsPrefix, $ops);
+        $options = array_merge_recursive($this->optionsPrefix, $ops);
 
         $route = new Route($method, $fullPattern, $action, $options);
         
