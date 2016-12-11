@@ -7,7 +7,7 @@ use SmileScreen\Routing\Route as Route;
 class Router extends Singleton 
 {
     protected $prefix = '';
-    protected $optionsPrefix = []
+    protected $optionsPrefix = [];
     protected $routes = [];
     protected $defaultRoute;
 
