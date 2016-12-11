@@ -61,6 +61,8 @@ class TemplateSystem extends Singleton
 
         $template = $this;
 
+        set_include_path($this->fullTemplateDirectory);
+        
         include $this->fullTemplateDirectory . '/' . $file;
     }
     
