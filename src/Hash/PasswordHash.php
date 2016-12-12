@@ -35,4 +35,14 @@ class PasswordHash
 
         return false;
     }
+
+    public static function getHashedPassword($password) 
+    {
+        $options = [
+            'cost' => 8,
+            'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM),
+        ];
+
+        return password_hash($password, PASSWORD_BCRYPT, $options);
+    }
 }
