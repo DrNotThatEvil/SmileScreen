@@ -120,12 +120,13 @@ class Router extends Singleton
 
     public function group(string $pattern, callable $fn, $ops = [])
     {
-        $this->prefix = $pattern;
+        $previousPrefix = $this->prefix; 
+        $this->prefix = $this->prefix . $pattern;
         $this->optionsPrefix = $ops;
 
         call_user_func($fn);
 
-        $this->prefix = ''; 
+        $this->prefix = $previousPrefix; 
         $this->optionsPrefix = [];
     }
 
