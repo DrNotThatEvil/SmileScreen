@@ -415,7 +415,7 @@ class BaseModel
 
     public function getCreatedOn()
     {
-        $this->created_on;
+        return $this->created_on;
     }
 
     /**
@@ -433,7 +433,7 @@ class BaseModel
     
     public function getUpdatedOn()
     {
-        $this->updated_on;
+        return $this->updated_on;
     }
 
 	/**
