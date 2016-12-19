@@ -33,6 +33,13 @@ class TemplateSystem extends Singleton
         $this->fullTemplateDirectory = realpath($directory);
     }
 
+
+    // This function i added for my own website. Its not used at the moment please ignore it.
+    // I can explain what it does briefly: 
+    // it reads a json file with asset files and there filenames
+    // so you can lookup what the real name is of for example a file /main.js 
+    // witch is acutally called main-HASH.js this is to ensure cache is busted on a javascipt change
+    // sounds technical but it means pepole dont get old javascript when using a caching server
     public function asset(string $path)
     {
         $filename = basename($path);

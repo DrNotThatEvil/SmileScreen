@@ -408,8 +408,14 @@ class BaseModel
      * @return void
      * @see BaseModel::setTimestamp
      */
-    public function setCreatedOn($datetime) {
+    public function setCreatedOn($datetime)
+    {
         $this->setTimestamp('created_on', $datetime);
+    }
+
+    public function getCreatedOn()
+    {
+        return $this->created_on;
     }
 
     /**
@@ -420,8 +426,14 @@ class BaseModel
      * @return void
      * @see \SmileScreen\Base\BaseModel::setTimestamp
      */
-    public function setUpdatedOn($datetime) {
+    public function setUpdatedOn($datetime)
+    {
         $this->setTimestamp('updated_on', $datetime);
+    }
+    
+    public function getUpdatedOn()
+    {
+        return $this->updated_on;
     }
 
 	/**

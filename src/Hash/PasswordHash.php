@@ -35,4 +35,13 @@ class PasswordHash
 
         return false;
     }
+
+    public static function getHashedPassword($password) 
+    {
+        $options = [
+            'cost' => 8,
+        ];
+
+        return password_hash($password, PASSWORD_BCRYPT, $options);
+    }
 }
