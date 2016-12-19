@@ -207,7 +207,6 @@ class Router extends Singleton
         
         if(is_null($foundRoute)) {
             $foundRoute = $this->defaultRoute;
-            return;
         }
     
         
