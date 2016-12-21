@@ -414,6 +414,9 @@ class DatabaseSystem extends Singleton
             for($i=0; $i<count($results); $i++) {
                 // Lets us loop through the results
                 $attributes = $results[$i];
+                if($where->isFullText()) {
+                    unset($attributes['score']);
+                }
                 // we get the attributes
                 unset($attributes['cnt']);
                 // we remove the count cause thats part of the model
