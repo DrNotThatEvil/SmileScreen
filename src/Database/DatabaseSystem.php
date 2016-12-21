@@ -402,6 +402,8 @@ class DatabaseSystem extends Singleton
 
             $results = $fillStatment->fetchAll(PDO::FETCH_ASSOC);
             // get all the data in a associative array ( google associative array if you want to know more! )
+            var_dump($results);
+            die;
 
             if (count($results) == 0) {
                 // the count value was zero we have no results 
