@@ -14,7 +14,7 @@ class SelectQuery extends Query {
     
     protected $fullTextOn = false;
     protected $fullTextFields = array();
-    protected $fullTextValue;
+    protected $fullTextValue = array();
 
     protected $groupBy = array();
 
@@ -73,7 +73,11 @@ class SelectQuery extends Query {
 
     public function getFullTextValue() 
     {
-        return $this->fullTextValue; 
+        $build = '';
+        foreach($this->fullTextValue as $value) {
+            $build = . $value.'* ';
+        }
+        return $build; 
     }
 
     public function getStatement() 
