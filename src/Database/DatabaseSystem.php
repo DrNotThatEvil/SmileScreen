@@ -412,6 +412,7 @@ class DatabaseSystem extends Singleton
             // thats needed to generate the list of new instances
 
             var_dump($results);
+            die;
 
             for($i=0; $i<count($results); $i++) {
                 // Lets us loop through the results
