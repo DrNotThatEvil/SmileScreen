@@ -381,7 +381,8 @@ class DatabaseSystem extends Singleton
         // the second is a array of values for the where that need to be passed to ->execute
         try {
             $fillStatment = $this->pdoObject->prepare($whereStatement[0]);
-            
+            echo $whereStatement[0];
+             
             if($where->isFullText()) {
                 $fillStatment->bindValue(':matchvalue1',
                     $where->getFullTextValue(), PDO::PARAM_STR);
@@ -402,8 +403,6 @@ class DatabaseSystem extends Singleton
 
             $results = $fillStatment->fetchAll(PDO::FETCH_ASSOC);
             // get all the data in a associative array ( google associative array if you want to know more! )
-            var_dump($results);
-            die;
 
             if (count($results) == 0) {
                 // the count value was zero we have no results 
