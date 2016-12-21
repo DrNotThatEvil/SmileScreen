@@ -75,7 +75,7 @@ class SelectQuery extends Query {
     {
         $build = '';
         foreach($this->fullTextValue as $value) {
-            $build = . $value.'* ';
+            $build .= $value.'* ';
         }
         return $build; 
     }
