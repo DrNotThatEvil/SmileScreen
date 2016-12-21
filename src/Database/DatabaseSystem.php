@@ -356,8 +356,12 @@ class DatabaseSystem extends Singleton
 
         $where->setTable($modelTableName);
         // We set the SelectQuery's table to this table
-        
-        $where->select(['*']);
+
+        // Here we handle fulltext searches
+        if(!$where->isFullText()) {
+            // Since the fulltext already has a * select we don't need to add it. 
+            $where->select(['*']);
+        }
         // We select everything from the table plus a count variable this is makes later logic easier 
 
         if (!in_array($modelTableName, $this->tables)) {
@@ -377,8 +381,20 @@ class DatabaseSystem extends Singleton
         // the second is a array of values for the where that need to be passed to ->execute
         try {
             $fillStatment = $this->pdoObject->prepare($whereStatement[0]);
+            
+            if($where->isFullText()) {
+                $fillStatment->bindValue(':matchvalue',
+                    $where->getFullTextValue(), PDO::PARAM_STR);
+            }
+
             // lets prepare the statement
-            $fillStatment->execute($whereStatement[1]);
+            if(!$where->isFullText()) {
+                // the statement is not full text.
+                // we pass the needed where data to the execute
+                $fillStatment->execute($whereStatement[1]);
+            } else {
+                $fillStatment->execute();
+            }
             // fill the statment with the data
 
             $results = $fillStatment->fetchAll(PDO::FETCH_ASSOC);

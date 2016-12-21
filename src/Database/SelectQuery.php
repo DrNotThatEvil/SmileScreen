@@ -71,7 +71,7 @@ class SelectQuery extends Query {
         return $this->fullTextOn; 
     } 
 
-    public function getFullTextvalue() 
+    public function getFullTextValue() 
     {
         return $this->fullTextValue; 
     }
@@ -123,7 +123,7 @@ class SelectQuery extends Query {
                 $statement .= 'WHERE ' . $this->whereRaw;
                 $whereValues = $this->whereRawValues;
             } else {
-                $statement .= 'where MATCH('; 
+                $statement .= 'WHERE MATCH('; 
                 for($i=0; $i<count($this->fullTextFields); $i++) {
                     $statement .= $this->fullTextFields[$i];
                     $statement .= ($i <(count($this->fullTextFields)-1) ? ',' : '');
