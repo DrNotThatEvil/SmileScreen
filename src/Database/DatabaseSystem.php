@@ -383,8 +383,11 @@ class DatabaseSystem extends Singleton
             $fillStatment = $this->pdoObject->prepare($whereStatement[0]);
             
             if($where->isFullText()) {
-                $fillStatment->bindValue(':matchvalue',
+                $fillStatment->bindValue(':matchvalue1',
                     $where->getFullTextValue(), PDO::PARAM_STR);
+                $fillStatment->bindValue(':matchvalue2',
+                    $where->getFullTextValue(), PDO::PARAM_STR);
+                
             }
             
             // lets prepare the statement
