@@ -66,6 +66,11 @@ class SelectQuery extends Query {
         return $this;
     }
 
+    public function orderBy($orderBy) 
+    {
+        $this->order = $orderBy;    
+    }
+
     public function isFullText()
     {
         return $this->fullTextOn; 
@@ -133,6 +138,15 @@ class SelectQuery extends Query {
                     $statement .= ($i <(count($this->fullTextFields)-1) ? ',' : '');
                 }
                 $statement .= ') AGAINST(:matchvalue2 IN BOOLEAN MODE) ORDER BY score DESC';
+            }
+        }
+
+        if (!empty($this->order) && !$this->fullTextOn) {
+             
+            $statement .= ' ORDER BY '; 
+            for($i=0; $i<count($this->order); $i++) {
+                $statement .= $this->order[$i][0] . ' ' . $this->order[$i][1];
+                $statement .= ($i <(count($this->order)-1) ? ',' : '');
             }
         }
 
