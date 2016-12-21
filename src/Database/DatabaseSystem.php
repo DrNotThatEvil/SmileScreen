@@ -379,6 +379,8 @@ class DatabaseSystem extends Singleton
         // Get statment returns a array.
         // The first part is always a SQL query we use in the ->prepare function
         // the second is a array of values for the where that need to be passed to ->execute
+        var_dump($whereStatement);
+        die;
         try {
             $fillStatment = $this->pdoObject->prepare($whereStatement[0]);
             
@@ -410,9 +412,6 @@ class DatabaseSystem extends Singleton
             $className = get_class($model);
             // here we get the class name of the model that was given to this function
             // thats needed to generate the list of new instances
-
-            var_dump($results);
-            die;
 
             for($i=0; $i<count($results); $i++) {
                 // Lets us loop through the results
