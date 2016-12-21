@@ -119,7 +119,7 @@ class SelectQuery extends Query {
                 $whereValues[] = $this->where[$key][1];
             }
         } else {
-            if(!$this->fulltexton) {
+            if(!$this->fullTextOn) {
                 $statement .= 'WHERE ' . $this->whereRaw;
                 $whereValues = $this->whereRawValues;
             } else {
