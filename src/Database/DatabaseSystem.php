@@ -411,6 +411,8 @@ class DatabaseSystem extends Singleton
             // here we get the class name of the model that was given to this function
             // thats needed to generate the list of new instances
 
+            var_dump($results);
+
             for($i=0; $i<count($results); $i++) {
                 // Lets us loop through the results
                 $attributes = $results[$i];
