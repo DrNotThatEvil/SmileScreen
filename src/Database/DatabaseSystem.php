@@ -379,8 +379,6 @@ class DatabaseSystem extends Singleton
         // Get statment returns a array.
         // The first part is always a SQL query we use in the ->prepare function
         // the second is a array of values for the where that need to be passed to ->execute
-        var_dump($whereStatement);
-        die;
         try {
             $fillStatment = $this->pdoObject->prepare($whereStatement[0]);
             
@@ -388,7 +386,10 @@ class DatabaseSystem extends Singleton
                 $fillStatment->bindValue(':matchvalue',
                     $where->getFullTextValue(), PDO::PARAM_STR);
             }
-
+            
+            echo "FUCK";
+            die;
+            
             // lets prepare the statement
             if(!$where->isFullText()) {
                 // the statement is not full text.
