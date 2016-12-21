@@ -11,6 +11,10 @@ class SelectQuery extends Query {
     protected $whereComb;
     protected $whereRaw;
     protected $whereRawValues;
+    
+    protected $fullTextOn = false;
+    protected $fullTextFields = array();
+    protected $fullTextValue;
 
     protected $groupBy = array();
 
@@ -41,6 +45,13 @@ class SelectQuery extends Query {
         return $this;
     }
 
+    public function fullText(array $fields, $match)
+    {
+        $this->fullTextOn = true;
+        $this->fullTextFields = $fields;
+        $this->fullTextValue = $match;
+    }
+
     public function where($ops, $comb = 'AND') 
     {
         $this->where = $ops;
@@ -53,6 +64,16 @@ class SelectQuery extends Query {
         $this->whereRaw = $raw;
         $this->whereRawValues = $values;
         return $this;
+    }
+
+    public function isFullText()
+    {
+        return $this->fullTextOn; 
+    } 
+
+    public function getFullTextvalue() 
+    {
+        return $this->fullTextValue; 
     }
 
     public function getStatement() 
@@ -68,16 +89,25 @@ class SelectQuery extends Query {
         $statement = 'SELECT ';
         $whereValues = array();
 
-        if (count($this->select) >= 1) {
-            for($i=0; $i<count($this->select); $i++) {
-                $statement .= $this->select[$i].($i < (count($this->select)-1) ? ', ' : ' ');
+        if (!$this->fullTextOn) {
+            if (count($this->select) >= 1) {
+                for($i=0; $i<count($this->select); $i++) {
+                    $statement .= $this->select[$i].($i < (count($this->select)-1) ? ', ' : ' ');
+                }
             }
+        } else {
+            $statement .= '*, MATCH('; 
+            for($i=0; $i<count($this->fullTextFields); $i++) {
+                $statement .= $this->fullTextFields[$i];
+                $statement .= ($i <(count($this->fullTextFields)-1) ? ',' : '');
+            }
+            $statement .= ') AGAINST(:matchvalue) AS score';
         }
 
         $statement .= ' FROM ' . $this->table . ' ';
-    
 
-        if (!isset($this->whereRaw)) {
+
+        if (!isset($this->whereRaw) && !$this->fullTextOn) {
             for($i=0; $i<count(array_keys($this->where)); $i++) {
                 $key = array_keys($this->where)[$i];
 
@@ -89,8 +119,17 @@ class SelectQuery extends Query {
                 $whereValues[] = $this->where[$key][1];
             }
         } else {
-            $statement .= 'WHERE ' . $this->whereRaw;
-            $whereValues = $this->whereRawValues;
+            if(!$this->fulltexton) {
+                $statement .= 'WHERE ' . $this->whereRaw;
+                $whereValues = $this->whereRawValues;
+            } else {
+                $statement .= 'where MATCH('; 
+                for($i=0; $i<count($this->fullTextFields); $i++) {
+                    $statement .= $this->fullTextFields[$i];
+                    $statement .= ($i <(count($this->fullTextFields)-1) ? ',' : '');
+                }
+                $statement .= ') AGAINST(:matchvalue)';
+            }
         }
 
         return [trim($statement).';', $whereValues];
