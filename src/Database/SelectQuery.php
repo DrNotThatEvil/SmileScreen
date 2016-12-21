@@ -105,7 +105,7 @@ class SelectQuery extends Query {
                 $statement .= $this->fullTextFields[$i];
                 $statement .= ($i <(count($this->fullTextFields)-1) ? ',' : '');
             }
-            $statement .= ') AGAINST(:matchvalue1) AS score';
+            $statement .= ') AGAINST(:matchvalue1 IN BOOLEAN MODE) AS score';
         }
 
         $statement .= ' FROM ' . $this->table . ' ';
@@ -132,7 +132,7 @@ class SelectQuery extends Query {
                     $statement .= $this->fullTextFields[$i];
                     $statement .= ($i <(count($this->fullTextFields)-1) ? ',' : '');
                 }
-                $statement .= ') AGAINST(:matchvalue2)';
+                $statement .= ') AGAINST(:matchvalue2 IN BOOLEAN MODE)';
             }
         }
 

@@ -381,7 +381,8 @@ class DatabaseSystem extends Singleton
         // the second is a array of values for the where that need to be passed to ->execute
         try {
             $fillStatment = $this->pdoObject->prepare($whereStatement[0]);
-            echo $whereStatement[0];
+            echo $whereStatement[0] . '<br />';
+            echo $where->getFullTextValue();
              
             if($where->isFullText()) {
                 $fillStatment->bindValue(':matchvalue1',
