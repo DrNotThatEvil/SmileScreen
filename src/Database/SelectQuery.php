@@ -82,7 +82,7 @@ class SelectQuery extends Query {
             throw new DatabaseSmileScreenException('SelectQuery has no table set');
         }
 
-        if (count($this->select) == 0) {
+        if (count($this->select) == 0 && !$this->fullTextOn) {
             throw new DatabaseSmileScreenException('SelectQuery has no select statement set');
         }
 
