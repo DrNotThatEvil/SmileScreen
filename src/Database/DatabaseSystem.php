@@ -387,14 +387,13 @@ class DatabaseSystem extends Singleton
                     $where->getFullTextValue(), PDO::PARAM_STR);
             }
             
-            var_dump($where);
-            die;
             // lets prepare the statement
             if(!$where->isFullText()) {
                 // the statement is not full text.
                 // we pass the needed where data to the execute
                 $fillStatment->execute($whereStatement[1]);
             } else {
+                echo "TEST";
                 $fillStatment->execute();
             }
             // fill the statment with the data
