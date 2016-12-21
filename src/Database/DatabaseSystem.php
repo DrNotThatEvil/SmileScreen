@@ -387,6 +387,8 @@ class DatabaseSystem extends Singleton
                     $where->getFullTextValue(), PDO::PARAM_STR);
             }
             
+            var_dump($where);
+            die;
             // lets prepare the statement
             if(!$where->isFullText()) {
                 // the statement is not full text.
