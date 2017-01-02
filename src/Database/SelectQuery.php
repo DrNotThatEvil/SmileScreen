@@ -45,7 +45,7 @@ class SelectQuery extends Query {
         return $this;
     }
 
-    public function fullText(array $fields, $match)
+    public function fullText(array $fields, array $match)
     {
         $this->fullTextOn = true;
         $this->fullTextFields = $fields;
