@@ -41,8 +41,11 @@ that I decided to keep this framework and put it in it's own git repository caus
 
 ## Installation
 
-I recommend using composer 
+I recommend using composer once we hit version 1.0.0
 But you could use clone this project and add it to your composer autoloader
+
+for now you can install the codebase and just add it to your composer.json file
+to start using it.
 
 ```
 composer install drnotthatevil/smilescreen
